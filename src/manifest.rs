@@ -3,6 +3,12 @@ use serde_yaml::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Eq, Deserialize)]
+struct Manifest {
+    includes: Vec<String>,
+    categories: Vec<Category>,
+}
+
+#[derive(Debug, PartialEq, Eq, Deserialize)]
 struct Category {
     name: String,
     presets: HashMap<String, Box<Value>>,
@@ -36,5 +42,26 @@ mod test {
                 },
             }
         )
+    }
+
+    #[test]
+    fn deserialize_manifest() {
+        let includes = vec![lorem::en::Word().fake(), lorem::en::Word().fake()];
+        assert_eq!(
+            serde_yaml::from_str::<Manifest>(&format!(
+                r#"
+                includes:
+                  - {}
+                  - {}
+                categories: []
+                "#,
+                includes[0], includes[1]
+            ))
+            .unwrap(),
+            Manifest {
+                includes,
+                categories: vec![],
+            }
+        );
     }
 }
