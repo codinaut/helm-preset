@@ -1,1 +1,1 @@
-mod manifest;
+mod config;
