@@ -113,6 +113,22 @@ mod test {
     }
 
     #[test]
+    fn deserialize_manifest_include_path_null() {
+        assert_eq!(
+            serde_yaml::from_str::<Manifest>(
+                r#"
+                includePath: null
+                "#,
+            )
+            .unwrap(),
+            Manifest {
+                include_path: None,
+                categories: vec![],
+            }
+        );
+    }
+
+    #[test]
     fn deserialize_manifest_empty() {
         assert_eq!(
             serde_yaml::from_str::<Manifest>("{}")
