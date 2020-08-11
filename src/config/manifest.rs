@@ -5,6 +5,8 @@ use std::collections::HashMap;
 #[derive(Debug, PartialEq, Deserialize)]
 pub struct Manifest {
     includes: Vec<String>,
+
+    #[serde(default)]
     categories: Vec<Category>,
 }
 
@@ -87,7 +89,7 @@ mod test {
     }
 
     #[test]
-    fn deserialize_manifest() {
+    fn deserialize_manifest_includes() {
         let includes = vec![lorem::en::Word().fake(), lorem::en::Word().fake()];
         assert_eq!(
             serde_yaml::from_str::<Manifest>(&format!(
@@ -95,7 +97,6 @@ mod test {
                 includes:
                   - {}
                   - {}
-                categories: []
                 "#,
                 includes[0], includes[1]
             ))
