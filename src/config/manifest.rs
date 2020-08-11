@@ -18,6 +18,8 @@ pub enum Category {
 #[derive(Debug, PartialEq, Deserialize)]
 pub struct ExplicitCategory {
     name: String,
+
+    #[serde(default)]
     presets: HashMap<String, Box<Value>>,
 }
 
@@ -47,6 +49,24 @@ mod test {
                 presets: hashmap! {
                     preset_key => Box::new(Value::String(preset_value))
                 },
+            }
+        ))
+    }
+
+    #[test]
+    fn deserialize_category_explicit_no_presets() {
+        let name = lorem::en::Word().fake();
+        assert!(matches!(
+            serde_yaml::from_str::<Category>(&format!(
+                r#"
+                name: "{}"
+            "#,
+                name
+            ))
+            .unwrap(),
+            Category::Explicit(e) if e == ExplicitCategory {
+                name,
+                presets: HashMap::new()
             }
         ))
     }
