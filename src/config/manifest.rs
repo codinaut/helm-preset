@@ -3,20 +3,20 @@ use serde_yaml::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Deserialize)]
-struct Manifest {
+pub struct Manifest {
     includes: Vec<String>,
     categories: Vec<Category>,
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
 #[serde(untagged)]
-enum Category {
+pub enum Category {
     NameOnly(String),
     Explicit(ExplicitCategory),
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
-struct ExplicitCategory {
+pub struct ExplicitCategory {
     name: String,
     presets: HashMap<String, Box<Value>>,
 }
