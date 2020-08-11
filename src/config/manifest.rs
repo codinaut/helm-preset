@@ -3,12 +3,17 @@ use serde_yaml::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Manifest {
-    #[serde(default)]
-    includes: Vec<String>,
+    #[serde(default = "default_include_path")]
+    include_path: Option<String>,
 
     #[serde(default)]
     categories: Vec<Category>,
+}
+
+fn default_include_path() -> Option<String> {
+    Some(".".to_string())
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
@@ -90,20 +95,18 @@ mod test {
     }
 
     #[test]
-    fn deserialize_manifest_includes() {
-        let includes = vec![lorem::en::Word().fake(), lorem::en::Word().fake()];
+    fn deserialize_manifest_include_path() {
+        let include_path = lorem::en::Word().fake();
         assert_eq!(
             serde_yaml::from_str::<Manifest>(&format!(
                 r#"
-                includes:
-                  - {}
-                  - {}
+                includePath: {}
                 "#,
-                includes[0], includes[1]
+                include_path
             ))
             .unwrap(),
             Manifest {
-                includes,
+                include_path: Some(include_path),
                 categories: vec![],
             }
         );
@@ -115,7 +118,7 @@ mod test {
             serde_yaml::from_str::<Manifest>("{}")
             .unwrap(),
             Manifest {
-                includes: vec![],
+                include_path: Some(".".to_string()),
                 categories: vec![],
             }
         );
