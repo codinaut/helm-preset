@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Deserialize)]
 pub struct Manifest {
+    #[serde(default)]
     includes: Vec<String>,
 
     #[serde(default)]
@@ -103,6 +104,18 @@ mod test {
             .unwrap(),
             Manifest {
                 includes,
+                categories: vec![],
+            }
+        );
+    }
+
+    #[test]
+    fn deserialize_manifest_empty() {
+        assert_eq!(
+            serde_yaml::from_str::<Manifest>("{}")
+            .unwrap(),
+            Manifest {
+                includes: vec![],
                 categories: vec![],
             }
         );
