@@ -3,11 +3,9 @@ pub mod manifest;
 use snafu::Snafu;
 
 #[derive(Debug, Snafu)]
-pub enum Error {
-}
+pub enum Error {}
 
-pub struct Entry {
-}
+pub struct Entry {}
 
 pub type Configuration = Vec<Vec<Entry>>;
 
@@ -23,13 +21,13 @@ mod test {
 
     #[test]
     fn empty_presets() {
-        let config = serde_yaml::from_str::<manifest::Manifest>(&format!(
-            r#"
-            categories:
-              - a
-              - b
-            "#,
-        ))
+        let config = serde_yaml::from_str::<manifest::Manifest>(
+            r"
+                categories:
+                  - a
+                  - b
+            ",
+        )
         .unwrap()
         .into_config()
         .unwrap();
