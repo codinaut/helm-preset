@@ -28,34 +28,29 @@ pub struct ExplicitCategory {
     name: String,
 
     #[serde(default)]
-    presets: HashMap<String, Box<Value>>,
+    presets: HashMap<String, Value>,
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use fake::{faker::lorem, Fake};
     use maplit::hashmap;
 
     #[test]
     fn deserialize_category_explicit() {
-        let name = lorem::en::Word().fake();
-        let preset_key: String = lorem::en::Word().fake();
-        let preset_value: String = lorem::en::Word().fake();
         assert!(matches!(
-            serde_yaml::from_str::<Category>(&format!(
-                r#"
-                name: "{}"
-                presets:
-                  {}: {}
-            "#,
-                name, preset_key, preset_value
-            ))
+            serde_yaml::from_str::<Category>(
+                r"
+                    name: name-1
+                    presets:
+                      key-1: value-1
+                ",
+            )
             .unwrap(),
             Category::Explicit(e) if e == ExplicitCategory {
-                name,
+                name: "name-1".to_string(),
                 presets: hashmap! {
-                    preset_key => Box::new(Value::String(preset_value))
+                    "key-1".to_string() => Value::String("value-1".to_string())
                 },
             }
         ))
@@ -63,80 +58,73 @@ mod test {
 
     #[test]
     fn deserialize_category_explicit_no_presets() {
-        let name = lorem::en::Word().fake();
         assert!(matches!(
-            serde_yaml::from_str::<Category>(&format!(
-                r#"
-                name: "{}"
-            "#,
-                name
-            ))
+            serde_yaml::from_str::<Category>(
+                r"
+                    name: name-2
+                ",
+            )
             .unwrap(),
             Category::Explicit(e) if e == ExplicitCategory {
-                name,
-                presets: HashMap::new()
+                name: "name-2".to_string(),
+                presets: HashMap::new(),
             }
         ))
     }
 
     #[test]
     fn deserialize_category_name_only() {
-        let name: String = lorem::en::Word().fake();
         assert!(matches!(
-            serde_yaml::from_str::<Category>(&format!(
-                r#"
-                "{}"
-            "#,
-                name
-            ))
+            serde_yaml::from_str::<Category>(
+                r"
+                    name-3
+                ",
+            )
             .unwrap(),
-            Category::NameOnly(n) if n == name
+            Category::NameOnly(n) if n == "name-3"
         ))
     }
 
     #[test]
     fn deserialize_manifest_include_path() {
-        let include_path = lorem::en::Word().fake();
         assert_eq!(
-            serde_yaml::from_str::<Manifest>(&format!(
-                r#"
-                includePath: {}
-                "#,
-                include_path
-            ))
+            serde_yaml::from_str::<Manifest>(
+                r"
+                    includePath: path-4
+                ",
+            )
             .unwrap(),
             Manifest {
-                include_path: Some(include_path),
+                include_path: Some("path-4".to_string()),
                 categories: vec![],
             }
-        );
+        )
     }
 
     #[test]
     fn deserialize_manifest_include_path_null() {
         assert_eq!(
             serde_yaml::from_str::<Manifest>(
-                r#"
-                includePath: null
-                "#,
+                r"
+                    includePath: null
+                ",
             )
             .unwrap(),
             Manifest {
                 include_path: None,
                 categories: vec![],
             }
-        );
+        )
     }
 
     #[test]
     fn deserialize_manifest_empty() {
         assert_eq!(
-            serde_yaml::from_str::<Manifest>("{}")
-            .unwrap(),
+            serde_yaml::from_str::<Manifest>("{}").unwrap(),
             Manifest {
                 include_path: Some(".".to_string()),
                 categories: vec![],
             }
-        );
+        )
     }
 }
