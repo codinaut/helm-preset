@@ -1,5 +1,5 @@
 use serde::Deserialize;
-use serde_yaml::Value;
+use serde_yaml::Mapping;
 use std::collections::HashMap;
 
 mod converter;
@@ -30,13 +30,15 @@ pub struct ExplicitCategory {
     name: String,
 
     #[serde(default)]
-    presets: HashMap<String, Value>,
+    presets: HashMap<String, Mapping>,
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
     use maplit::hashmap;
+    use serde_yaml::Value::String;
+    use std::iter::FromIterator;
 
     #[test]
     fn deserialize_category_explicit() {
@@ -46,7 +48,8 @@ mod test {
                     categories:
                       - name: name-1
                         presets:
-                          key-1: value-1
+                          key-1:
+                            a: b
                 ",
             )
             .unwrap()
@@ -54,7 +57,9 @@ mod test {
             Category::Explicit(e) if e == &ExplicitCategory {
                 name: "name-1".to_string(),
                 presets: hashmap! {
-                    "key-1".to_string() => Value::String("value-1".to_string())
+                    "key-1".to_string() => Mapping::from_iter(hashmap! {
+                        String("a".to_string()) => String("b".to_string()),
+                    })
                 },
             }
         ))
