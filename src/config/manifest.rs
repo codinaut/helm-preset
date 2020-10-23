@@ -37,7 +37,7 @@ mod test {
     use maplit::hashmap;
 
     #[test]
-    fn deserialize_manifest_category_explicit() {
+    fn deserialize_category_explicit() {
         assert!(matches!(
             &serde_yaml::from_str::<Manifest>(
                 r"
@@ -59,7 +59,7 @@ mod test {
     }
 
     #[test]
-    fn deserialize_manifest_category_explicit_no_presets() {
+    fn deserialize_category_explicit_no_presets() {
         assert!(matches!(
             &serde_yaml::from_str::<Manifest>(
                 r"
@@ -77,7 +77,7 @@ mod test {
     }
 
     #[test]
-    fn deserialize_manifest_category_name_only() {
+    fn deserialize_category_name_only() {
         assert!(matches!(
             &serde_yaml::from_str::<Manifest>(
                 r"
@@ -92,7 +92,7 @@ mod test {
     }
 
     #[test]
-    fn deserialize_manifest_include_path() {
+    fn deserialize_include_path() {
         assert_eq!(
             serde_yaml::from_str::<Manifest>(
                 r"
@@ -108,7 +108,7 @@ mod test {
     }
 
     #[test]
-    fn deserialize_manifest_include_path_null() {
+    fn deserialize_include_path_null() {
         assert_eq!(
             serde_yaml::from_str::<Manifest>(
                 r"
@@ -124,7 +124,7 @@ mod test {
     }
 
     #[test]
-    fn deserialize_manifest_empty() {
+    fn deserialize_empty() {
         assert_eq!(
             serde_yaml::from_str::<Manifest>("{}").unwrap(),
             Manifest {
