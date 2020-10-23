@@ -37,17 +37,19 @@ mod test {
     use maplit::hashmap;
 
     #[test]
-    fn deserialize_category_explicit() {
+    fn deserialize_manifest_category_explicit() {
         assert!(matches!(
-            serde_yaml::from_str::<Category>(
+            &serde_yaml::from_str::<Manifest>(
                 r"
-                    name: name-1
-                    presets:
-                      key-1: value-1
+                    categories:
+                      - name: name-1
+                        presets:
+                          key-1: value-1
                 ",
             )
-            .unwrap(),
-            Category::Explicit(e) if e == ExplicitCategory {
+            .unwrap()
+            .categories[0],
+            Category::Explicit(e) if e == &ExplicitCategory {
                 name: "name-1".to_string(),
                 presets: hashmap! {
                     "key-1".to_string() => Value::String("value-1".to_string())
@@ -57,15 +59,17 @@ mod test {
     }
 
     #[test]
-    fn deserialize_category_explicit_no_presets() {
+    fn deserialize_manifest_category_explicit_no_presets() {
         assert!(matches!(
-            serde_yaml::from_str::<Category>(
+            &serde_yaml::from_str::<Manifest>(
                 r"
-                    name: name-2
+                    categories:
+                      - name: name-2
                 ",
             )
-            .unwrap(),
-            Category::Explicit(e) if e == ExplicitCategory {
+            .unwrap()
+            .categories[0],
+            Category::Explicit(e) if e == &ExplicitCategory {
                 name: "name-2".to_string(),
                 presets: HashMap::new(),
             }
@@ -73,14 +77,16 @@ mod test {
     }
 
     #[test]
-    fn deserialize_category_name_only() {
+    fn deserialize_manifest_category_name_only() {
         assert!(matches!(
-            serde_yaml::from_str::<Category>(
+            &serde_yaml::from_str::<Manifest>(
                 r"
-                    name-3
+                    categories:
+                      - name-3
                 ",
             )
-            .unwrap(),
+            .unwrap()
+            .categories[0],
             Category::NameOnly(n) if n == "name-3"
         ))
     }
