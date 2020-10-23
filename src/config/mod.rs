@@ -21,16 +21,7 @@ mod test {
 
     #[test]
     fn empty_presets() {
-        let config = serde_yaml::from_str::<manifest::Manifest>(
-            r"
-                categories:
-                  - a
-                  - b
-            ",
-        )
-        .unwrap()
-        .into_config()
-        .unwrap();
+        let config = manifest::Manifest::default().into_config().unwrap();
         assert_eq!(config.len(), 0)
     }
 }

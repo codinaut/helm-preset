@@ -2,7 +2,7 @@ use serde::Deserialize;
 use serde_yaml::Value;
 use std::collections::HashMap;
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, Default, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Manifest {
     #[serde(default = "default_include_path")]
