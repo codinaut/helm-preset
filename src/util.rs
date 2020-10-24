@@ -1,10 +1,12 @@
-use serde_yaml::Mapping;
+use serde_yaml::{Mapping, Value};
 
-fn merge(mut source: Mapping, override_map: Mapping) -> Mapping {
-    for (k, v) in override_map {
-        source.insert(k, v);
-    };
-    return source
+fn merge(mut source: Mapping, override_value: Value) -> Mapping {
+    if let Value::Mapping(override_map) = override_value {
+        for (k, v) in override_map {
+            source.insert(k, v);
+        }
+    }
+    return source;
 }
 
 #[cfg(test)]
@@ -19,7 +21,10 @@ mod test {
             ",
         )
         .unwrap();
-        assert_eq!(merge(source.clone(), Mapping::new()), source)
+        assert_eq!(
+            merge(source.clone(), Value::Mapping(Mapping::new())),
+            source
+        )
     }
 
     #[test]
@@ -36,6 +41,9 @@ mod test {
             ",
         )
         .unwrap();
-        assert_eq!(merge(source, override_map.clone()), override_map)
+        assert_eq!(
+            merge(source, Value::Mapping(override_map.clone())),
+            override_map
+        )
     }
 }
