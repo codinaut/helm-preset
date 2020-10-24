@@ -1,49 +1,48 @@
-use serde_yaml::{Mapping, Value};
+use serde_yaml::Value;
 
-fn merge(mut source: Mapping, override_value: Value) -> Mapping {
-    if let Value::Mapping(override_map) = override_value {
-        for (k, v) in override_map {
-            source.insert(k, v);
+fn deep_merge(target: &mut &mut Value, override_value: Value) {
+    if let Value::Mapping(map) = *target {
+        if let Value::Mapping(override_map) = override_value {
+            for (k, v) in override_map {
+                map.insert(k, v);
+            }
         }
     }
-    return source;
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+    use serde_yaml::Mapping;
 
     #[test]
     fn merge_with_empty() {
-        let source = serde_yaml::from_str::<Mapping>(
+        let target = serde_yaml::from_str::<Value>(
             r"
                 a: b
             ",
         )
         .unwrap();
-        assert_eq!(
-            merge(source.clone(), Value::Mapping(Mapping::new())),
-            source
-        )
+        let mut source = target.clone();
+        deep_merge(&mut &mut source, Value::Mapping(Mapping::new()));
+        assert_eq!(source, target)
     }
 
     #[test]
     fn merge_with_replacement() {
-        let source = serde_yaml::from_str::<Mapping>(
+        let mut source = serde_yaml::from_str::<Value>(
             r"
                 a: b
             ",
         )
         .unwrap();
-        let override_map = serde_yaml::from_str::<Mapping>(
+        let target = serde_yaml::from_str::<Value>(
             r"
                 a: c
             ",
         )
         .unwrap();
-        assert_eq!(
-            merge(source, Value::Mapping(override_map.clone())),
-            override_map
-        )
+        deep_merge(&mut &mut source, target.clone());
+        assert_eq!(source, target)
     }
 }
