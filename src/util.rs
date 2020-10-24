@@ -16,6 +16,14 @@ mod test {
     use serde_yaml::Mapping;
 
     #[test]
+    fn deep_merge_replaces_non_map_with_non_map_substitute() {
+        let mut target = Value::String("value-1".to_string());
+        let substitute = Value::String("value-replacement-1".to_string());
+        deep_merge(&mut &mut target, substitute.clone());
+        assert_eq!(target, substitute)
+    }
+
+    #[test]
     fn merge_with_empty() {
         let target = serde_yaml::from_str::<Value>(
             r"
