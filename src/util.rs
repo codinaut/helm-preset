@@ -23,7 +23,7 @@ mod test {
     use serde_yaml::Mapping;
 
     #[test]
-    fn deep_merge_replaces_non_map_with_non_map_substitute() {
+    fn deep_merge_non_map_with_non_map_returns_substituted() {
         let mut target = Value::String("value-1".to_string());
         let substitute = Value::String("value-replacement-1".to_string());
 
@@ -32,7 +32,7 @@ mod test {
     }
 
     #[test]
-    fn deep_merge_map_with_empty_map_is_no_op() {
+    fn deep_merge_map_with_complement_empty_map_is_no_op() {
         let mut target = serde_yaml::from_str::<Value>(
             r"
                 a: b
@@ -47,7 +47,7 @@ mod test {
     }
 
     #[test]
-    fn deep_merge_map_with_map_returns_complement() {
+    fn deep_merge_map_with_substitute_map_returns_substituted() {
         let mut target = serde_yaml::from_str::<Value>(
             r"
                 a: b
