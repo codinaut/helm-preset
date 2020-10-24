@@ -1,11 +1,11 @@
 use serde_yaml::{Mapping, Value};
 
 fn merge_map(target: &mut Mapping, substitute: Mapping) {
-    for (k, v) in substitute {
-        if let Some(mut value) = target.get_mut(&k) {
-            deep_merge(&mut value, v)
+    for (subtitute_key, subtitute_value) in substitute {
+        if let Some(mut value) = target.get_mut(&subtitute_key) {
+            deep_merge(&mut value, subtitute_value)
         } else {
-            target.insert(k, v);
+            target.insert(subtitute_key, subtitute_value);
         }
     }
 }
