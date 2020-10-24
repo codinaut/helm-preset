@@ -1,11 +1,18 @@
-use serde_yaml::Value;
+use serde_yaml::{Mapping, Value};
 
-fn deep_merge(target: &mut &mut Value, substitute: Value) {
-    if let Value::Mapping(map) = *target {
-        if let Value::Mapping(override_map) = substitute {
-            for (k, v) in override_map {
-                map.insert(k, v);
-            }
+fn merge_map(target: &mut Mapping, substitute: Mapping) {
+    for (k, v) in substitute {
+        target.insert(k, v);
+    }
+}
+
+pub fn deep_merge(target: &mut &mut Value, substitute: Value) {
+    match (target, substitute) {
+        (Value::Mapping(target_map), Value::Mapping(substitute_map)) => {
+            merge_map(target_map, substitute_map)
+        }
+        (target_any, substitute_any) => {
+            **target_any = substitute_any
         }
     }
 }
