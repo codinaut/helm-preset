@@ -2,7 +2,11 @@ use serde_yaml::{Mapping, Value};
 
 fn merge_map(target: &mut Mapping, substitute: Mapping) {
     for (k, v) in substitute {
-        target.insert(k, v);
+        if let Some(mut value) = target.get_mut(&k) {
+            deep_merge(&mut value, v)
+        } else {
+            target.insert(k, v);
+        }
     }
 }
 
@@ -63,5 +67,34 @@ mod test {
 
         deep_merge(&mut &mut target, substitute.clone());
         assert_eq!(target, substitute)
+    }
+
+    #[test]
+    fn deep_merge_submap_with_complement_submap_returns_complemented() {
+        let mut target = serde_yaml::from_str::<Value>(
+            r"
+                a:
+                  b: c
+            ",
+        )
+        .unwrap();
+        let substitute = serde_yaml::from_str::<Value>(
+            r"
+                a:
+                  c: d
+            ",
+        )
+        .unwrap();
+        let conclusion = serde_yaml::from_str::<Value>(
+            r"
+                a:
+                  b: c
+                  c: d
+            ",
+        )
+        .unwrap();
+
+        deep_merge(&mut &mut target, substitute);
+        assert_eq!(target, conclusion)
     }
 }
