@@ -2,21 +2,21 @@ use serde_yaml::{Mapping, Value};
 
 fn merge_map(target: &mut Mapping, substitute: Mapping) {
     for (subtitute_key, subtitute_value) in substitute {
-        if let Some(mut value) = target.get_mut(&subtitute_key) {
-            deep_merge(&mut value, subtitute_value)
+        if let Some(value) = target.get_mut(&subtitute_key) {
+            deep_merge(value, subtitute_value)
         } else {
             target.insert(subtitute_key, subtitute_value);
         }
     }
 }
 
-pub fn deep_merge(target: &mut &mut Value, substitute: Value) {
+pub fn deep_merge(target: &mut Value, substitute: Value) {
     match (target, substitute) {
         (Value::Mapping(target_map), Value::Mapping(substitute_map)) => {
             merge_map(target_map, substitute_map)
         }
         (target_any, substitute_any) => {
-            **target_any = substitute_any
+            *target_any = substitute_any
         }
     }
 }
@@ -31,7 +31,7 @@ mod test {
         let mut target = Value::String("value-1".to_string());
         let substitute = Value::String("value-replacement-1".to_string());
 
-        deep_merge(&mut &mut target, substitute.clone());
+        deep_merge(&mut target, substitute.clone());
         assert_eq!(target, substitute)
     }
 
@@ -46,7 +46,7 @@ mod test {
         let substitute = Value::Mapping(Mapping::new());
         let conclusion = target.clone();
 
-        deep_merge(&mut &mut target, substitute);
+        deep_merge(&mut target, substitute);
         assert_eq!(target, conclusion)
     }
 
@@ -65,7 +65,7 @@ mod test {
         )
         .unwrap();
 
-        deep_merge(&mut &mut target, substitute.clone());
+        deep_merge(&mut target, substitute.clone());
         assert_eq!(target, substitute)
     }
 
@@ -94,7 +94,7 @@ mod test {
         )
         .unwrap();
 
-        deep_merge(&mut &mut target, substitute);
+        deep_merge(&mut target, substitute);
         assert_eq!(target, conclusion)
     }
 }
